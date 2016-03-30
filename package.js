@@ -11,7 +11,6 @@ Package.onUse(function(api) {
   api.use([
     'ecmascript',
     'ostrio:cookies',
-    'rocketchat:lib'
   ])
   api.use([
     'templating'
