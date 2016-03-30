@@ -10,7 +10,7 @@ Package.onUse(function(api) {
 
   api.use([
     'ecmascript',
-    'ostrio:cookies',
+    'ostrio:cookies@2.0.2'
   ])
   api.use([
     'templating'
