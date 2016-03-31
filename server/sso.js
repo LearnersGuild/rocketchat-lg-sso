@@ -10,9 +10,9 @@ function createOrUpdateUserFromJWT(lgJWT) {
       $in: userInfo.emails
     }
   })
-  const globalRoles = ['user']
+  const roles = ['user']
   if (userInfo.roles.indexOf('staff') >= 0) {
-    globalRoles.push('admin')
+    roles.push('admin')
   }
   const newUser = {
     name: userInfo.name,
@@ -20,7 +20,7 @@ function createOrUpdateUserFromJWT(lgJWT) {
     emails: userInfo.emails.map(email => {
       return {address: email, verified: true}
     }),
-    globalRoles,
+    roles,
     active: true,
     avatarOrigin: 'gravatar'
   }
@@ -30,7 +30,7 @@ function createOrUpdateUserFromJWT(lgJWT) {
     Meteor.users.update(user, newUser)
     user = Meteor.users.findOne(user._id)
   } else {
-    console.log('[LG SSO] no such user, creating new user')
+    console.log('[LG SSO] no such user, creating new Rocket.chat user')
     const userId = Accounts.insertUserDoc({}, newUser)
     user = Meteor.users.findOne(userId)
   }

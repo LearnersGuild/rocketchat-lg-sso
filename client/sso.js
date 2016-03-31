@@ -13,6 +13,7 @@ Meteor.loginUsingLearnersGuildJWT = function(lgJWT, userCallback) {
 Template.loginLayout.created = function() {
   const lgJWT = cookies.get('rc_lgJWT')
   if (lgJWT) {
+    console.log('[LG SSO] rc_lgJWT cookie found, logging in')
     return Meteor.loginUsingLearnersGuildJWT(lgJWT)
   }
   console.log('[LG SSO] no rc_lgJWT cookie found, redirecting to IDM')
