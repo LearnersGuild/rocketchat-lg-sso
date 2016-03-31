@@ -15,8 +15,10 @@ Template.loginLayout.created = function() {
   if (lgJWT) {
     return Meteor.loginUsingLearnersGuildJWT(lgJWT)
   }
+  console.log('[LG SSO] no rc_lgJWT cookie found, redirecting to IDM')
   // differentiate between dev and prod
-  const idmURL = window.location.href.match(/localhost\:3000/) ? 'http://localhost:8081' : 'https://idm.learnersguild.org'
+  const idmURL = window.location.href.match(/chat.learnersguild.org/) ? 'https://idm.learnersguild.org' : 'http://localhost:8081'
   const redirect = encodeURIComponent(window.location.href)
+  console.log('[LG SSO] idmURL:', idmURL, 'redirect:', redirect)
   window.location.href = `${idmURL}/sign-in?redirect=${redirect}`
 }

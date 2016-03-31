@@ -10,22 +10,27 @@ function createOrUpdateUserFromJWT(lgJWT) {
       $in: userInfo.emails
     }
   })
-  if (!user) {
+  const globalRoles = ['user']
+  if (userInfo.roles.indexOf('staff') >= 0) {
+    globalRoles.push('admin')
+  }
+  const newUser = {
+    name: userInfo.name,
+    username: userInfo.handle,
+    emails: userInfo.emails.map(email => {
+      return {address: email, verified: true}
+    }),
+    globalRoles,
+    active: true,
+    avatarOrigin: 'gravatar'
+  }
+
+  if (user) {
+    console.log('[LG SSO] found user, updating Rocket.Chat user info')
+    Meteor.users.update(user, newUser)
+    user = Meteor.users.findOne(user._id)
+  } else {
     console.log('[LG SSO] no such user, creating new user')
-    const globalRoles = ['user']
-    if (userInfo.roles.indexOf('staff') >= 0) {
-      globalRoles.push('admin')
-    }
-    const newUser = {
-      name: userInfo.name,
-      username: userInfo.handle,
-      emails: userInfo.emails.map(email => {
-        return {address: email, verified: true}
-      }),
-      globalRoles,
-      active: true,
-      avatarOrigin: 'gravatar'
-    }
     const userId = Accounts.insertUserDoc({}, newUser)
     user = Meteor.users.findOne(userId)
   }
@@ -77,6 +82,8 @@ const cookie = new Cookies({
       } catch (err) {
         console.error('[LG SSO] invalid or expired lgJWT token cookie', err.stack)
       }
+    } else {
+      console.log('[LG SSO] no lgJWT cookie. Available cookies:', cookies.keys())
     }
   }
 })
