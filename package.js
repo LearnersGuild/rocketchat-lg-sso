@@ -1,6 +1,6 @@
 Package.describe({
   name: 'learnersguild:rocketchat-lg-sso',
-  version: '0.1.2',
+  version: '0.2.0',
   summary: 'Accounts login handler for Learners Guild SSO.',
   git: 'https://github.com/LearnersGuild/rocketchat-lg-sso'
 })
@@ -9,8 +9,7 @@ Package.onUse(function(api) {
   api.versionsFrom('1.2.1')
 
   api.use([
-    'ecmascript',
-    'ostrio:cookies@2.0.2'
+    'ecmascript'
   ])
   api.use([
     'templating'

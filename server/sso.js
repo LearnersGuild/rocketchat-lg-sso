@@ -48,7 +48,6 @@ function createOrUpdateUserFromJWT(lgJWT) {
 
 Accounts.registerLoginHandler(loginRequest => {
   // console.log('[LG SSO] loginRequest:', loginRequest)
-  const cookies = new Cookies()
   const {lgSSO, lgJWT} = loginRequest
   if(!lgSSO || !lgJWT) {
     return undefined
@@ -59,32 +58,8 @@ Accounts.registerLoginHandler(loginRequest => {
     // console.log('userId:', userId, 'token:', token)
     return {userId, token}
   } catch (err) {
-    console.error('[LG SSO] invalid or expired lgJWT token cookie', err.stack)
-    cookies.remove('rc_lgJWT')
+    console.error('[LG SSO] invalid or expired lgJWT token', err.stack)
   }
 
   return undefined
 })
-
-// set-up middleware to pull token info from our server-only cookie and cram
-// it into a client-side Meteor cookie with a similar name to handle sign-in
-// from the cookie
-const cookie = new Cookies({
-  auto: true,
-  handler: cookies => {
-    const lgJWT = cookies.get('lgJWT')
-    if (lgJWT) {
-      // if the token is valid, set the Rocket.Chat JWT cookie
-      try {
-        const userInfo = userFromJWT(lgJWT)
-        const secure = (process.env.NODE_ENV === 'production')
-        cookies.set('rc_lgJWT', lgJWT, {secure})
-      } catch (err) {
-        console.error('[LG SSO] invalid or expired lgJWT token cookie', err.stack)
-      }
-    } else {
-      console.log('[LG SSO] no lgJWT cookie. Available cookies:', cookies.keys())
-    }
-  }
-})
-WebApp.connectHandlers.use(cookie.middleware())
