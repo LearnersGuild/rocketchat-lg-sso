@@ -11,7 +11,7 @@ function createOrUpdateUserFromJWT(lgJWT) {
     }
   })
   const roles = ['user']
-  if (userInfo.roles.indexOf('staff') >= 0) {
+  if (userInfo.roles.indexOf('backoffice') >= 0) {
     roles.push('admin')
   }
   const newUser = {
