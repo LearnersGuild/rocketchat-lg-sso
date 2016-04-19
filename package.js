@@ -1,6 +1,6 @@
 Package.describe({
   name: 'learnersguild:rocketchat-lg-sso',
-  version: '0.2.4',
+  version: '0.2.5',
   summary: 'Accounts login handler for Learners Guild SSO.',
   git: 'https://github.com/LearnersGuild/rocketchat-lg-sso'
 })
@@ -21,6 +21,7 @@ Package.onUse(function(api) {
 
   api.addFiles('client/sso.js', 'client')
   api.addFiles('server/sso.js', 'server')
+  api.addFiles('server/startup.js', 'server')
 
   api.export('userFromJWT', 'server')
 })
