@@ -63,3 +63,6 @@ Template.loginLayout.created = function() {
   console.log('[LG SSO] idmURL:', idmURL, 'redirect:', redirect)
   window.location.href = `${idmURL}/sign-in?redirect=${redirect}&responseType=token`
 }
+
+// make sure our lgSSO service data is returned with user object
+Meteor.subscribe('lgUserData')

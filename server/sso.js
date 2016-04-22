@@ -34,7 +34,10 @@ query($id: ID!) {
   getPlayerById(id: $id) {
     id
     chapter {
+      name
       channelName
+      timezone
+      goalRepositoryURL
     }
   }
 }
@@ -55,29 +58,48 @@ function findOrCreateChapterRoom(chapterChannelName) {
   return channelRoom
 }
 
-function joinRooms(rcUser, lgJWT, lgUser) {
+function joinRoom(rcUser, roomName) {
   Meteor.runAsUser(rcUser._id, () => {
-    // join general room
-    const generalRoom = RocketChat.models.Rooms.findOneByName('general')
-    Meteor.call('joinRoom', generalRoom._id)
-
-    if (lgUser.roles.indexOf('player') >= 0) {
-      // join welcome room
-      const welcomeRoom = RocketChat.models.Rooms.findOneByName('welcome')
-      Meteor.call('joinRoom', welcomeRoom._id)
-
-      // join chapter room (after fetching player from game service)
-      fetchPlayer(lgJWT, lgUser)
-        .then(player => {
-          const channelRoom = findOrCreateChapterRoom(player.chapter.channelName)
-          Meteor.call('joinRoom', channelRoom._id)
-        })
-        .catch(error => {
-          // TODO: log to sentry
-          console.error('[LG SSO] ERROR getting player info', error.stack)
-        })
-    }
+    const room = RocketChat.models.Rooms.findOneByName(roomName)
+    Meteor.call('joinRoom', room._id)
   })
+}
+
+function lgUserSetup(rcUser, lgJWT, lgUser, userIsNew) {
+  // save our token
+  Meteor.users.update(rcUser, {
+    $set: {
+      'services.lgSSO': {
+        userInfo: lgUser,
+        lgJWT,
+      },
+    },
+  })
+
+  if (userIsNew) {
+    joinRoom(rcUser, 'general')
+  }
+  if (lgUser.roles.indexOf('player') >= 0) {
+    fetchPlayer(lgJWT, lgUser)
+      .then(player => {
+        // save our player info
+        Meteor.users.update(rcUser, {
+          $set: {
+            'services.lgSSO.playerInfo': player,
+          }
+        })
+
+        if (userIsNew) {
+          joinRoom(rcUser, 'welcome')
+          const chapterRoom = findOrCreateChapterRoom(player.chapter.channelName)
+          joinRoom(rcUser, chapterRoom.name)
+        }
+      })
+      .catch(error => {
+        // TODO: log to sentry
+        console.error('[LG SSO] ERROR getting player info', error.stack)
+      })
+  }
 }
 
 function createOrUpdateUserFromJWT(lgJWT) {
@@ -109,13 +131,16 @@ function createOrUpdateUserFromJWT(lgJWT) {
     console.log('[LG SSO] found user, updating Rocket.Chat user info')
     Meteor.users.update(user, newUser)
     user = Meteor.users.findOne(user._id)
+
+    // Learners Guild specific setup
+    lgUserSetup(user, lgJWT, userInfo, false)
   } else {
     console.log('[LG SSO] no such user, creating new Rocket.chat user')
     const userId = Accounts.insertUserDoc({}, newUser)
     user = Meteor.users.findOne(userId)
 
-    // join any rooms as necessary
-    joinRooms(user, lgJWT, userInfo)
+    // Learners Guild specific setup
+    lgUserSetup(user, lgJWT, userInfo, true)
   }
 
   // update the login token
@@ -145,4 +170,16 @@ Accounts.registerLoginHandler(loginRequest => {
   }
 
   return undefined
+})
+
+// make sure our lgSSO service data is returned with user object
+Meteor.publish('lgUserData', function () {
+  if (this.userId) {
+    return Meteor.users.find(
+      {_id: this.userId},
+      {fields: {'services.lgSSO': 1}}
+    )
+  } else {
+    this.ready()
+  }
 })
