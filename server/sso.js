@@ -45,7 +45,13 @@ query($id: ID!) {
     variables: {id: lgUser.id},
   }
   return graphQLFetcher(lgJWT, baseURL)(query)
-    .then(graphQLResponse => graphQLResponse.data.getPlayerById)
+    .then(graphQLResponse => {
+      if (graphQLResponse.errors) {
+        const messages = graphQLResponse.errors.map(e => e.message)
+        throw new Error(messages.join('\n'))
+      }
+      return graphQLResponse.data.getPlayerById
+    })
 }
 
 function findOrCreateChapterRoom(chapterChannelName) {
@@ -144,6 +150,7 @@ function createOrUpdateUserFromJWT(lgJWT) {
   }
 
   // update the login token
+  user = Meteor.users.findOne(user._id)  // re-fetch in case lgUserSetup updated
   const stampedToken = Accounts._generateStampedLoginToken()
   Meteor.users.update(user, {
     $push: {
