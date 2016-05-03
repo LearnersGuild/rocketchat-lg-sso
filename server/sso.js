@@ -1,4 +1,5 @@
 userFromJWT = Npm.require('@learnersguild/idm-jwt-auth/lib/utils').userFromJWT
+const Future = Npm.require('fibers/future')
 
 function graphQLFetcher(lgJWT, baseURL) {
   return graphQLParams => {
@@ -86,6 +87,8 @@ function lgUserSetup(rcUser, lgJWT, lgUser, userIsNew) {
     joinRoom(rcUser, 'general')
   }
   if (lgUser.roles.indexOf('player') >= 0) {
+    const fut = new Future()
+
     fetchPlayer(lgJWT, lgUser)
       .then(player => {
         // save our player info
@@ -100,11 +103,15 @@ function lgUserSetup(rcUser, lgJWT, lgUser, userIsNew) {
           const chapterRoom = findOrCreateChapterRoom(player.chapter.channelName)
           joinRoom(rcUser, chapterRoom.name)
         }
+        fut.return()
       })
       .catch(error => {
         // TODO: log to sentry
         console.error('[LG SSO] ERROR getting player info', error.stack)
+        fut.return()
       })
+
+    return fut.wait()
   }
 }
 
@@ -150,7 +157,6 @@ function createOrUpdateUserFromJWT(lgJWT) {
   }
 
   // update the login token
-  user = Meteor.users.findOne(user._id)  // re-fetch in case lgUserSetup updated
   const stampedToken = Accounts._generateStampedLoginToken()
   Meteor.users.update(user, {
     $push: {
