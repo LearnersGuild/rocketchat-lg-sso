@@ -10,8 +10,10 @@ Package.onUse(function(api) {
 
   api.use([
     'ecmascript',
-    'rocketchat:lib'
   ])
+  api.use([
+    'rocketchat:lib@0.0.1'
+  ], { weak: true, unordered: false })
   api.use([
     'templating'
   ], 'client')
