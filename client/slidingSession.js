@@ -47,25 +47,27 @@ query($id: ID!) {
     .catch(function(error) { console.error(error.stack) })
 }
 
-// Set up some callbacks to detect when users are active.
-RocketChat.callbacks.add('beforeSaveMessage', message => {
-  updateLastUserActivityAt()
-  return message
-}, RocketChat.callbacks.priority.LOW)
-RocketChat.callbacks.add('beforeCreateChannel', (user, room) => {
-  updateLastUserActivityAt()
-  return room
-}, RocketChat.callbacks.priority.LOW)
-RocketChat.callbacks.add('beforeJoinRoom', (user, room) => {
-  updateLastUserActivityAt()
-  return room
-}, RocketChat.callbacks.priority.LOW)
-RocketChat.callbacks.add('beforeLeaveRoom', (user, room) => {
-  updateLastUserActivityAt()
-  return room
-}, RocketChat.callbacks.priority.LOW)
+Meteor.startup(() => {
+  // Set up some callbacks to detect when users are active.
+  RocketChat.callbacks.add('beforeSaveMessage', message => {
+    updateLastUserActivityAt()
+    return message
+  }, RocketChat.callbacks.priority.LOW)
+  RocketChat.callbacks.add('beforeCreateChannel', (user, room) => {
+    updateLastUserActivityAt()
+    return room
+  }, RocketChat.callbacks.priority.LOW)
+  RocketChat.callbacks.add('beforeJoinRoom', (user, room) => {
+    updateLastUserActivityAt()
+    return room
+  }, RocketChat.callbacks.priority.LOW)
+  RocketChat.callbacks.add('beforeLeaveRoom', (user, room) => {
+    updateLastUserActivityAt()
+    return room
+  }, RocketChat.callbacks.priority.LOW)
 
-// Every minute, we'll wake up to see if the user is active but has dated
-// user information (including JWT token). If so, we'll fetch a new JWT
-// token and update our user information in the Rocket.Chat database.
-Meteor.setInterval(fetchJWTAndUpdateUserInfo, 1000 * 60)
+  // Every minute, we'll wake up to see if the user is active but has dated
+  // user information (including JWT token). If so, we'll fetch a new JWT
+  // token and update our user information in the Rocket.Chat database.
+  Meteor.setInterval(fetchJWTAndUpdateUserInfo, 1000 * 60)
+})
