@@ -42,7 +42,7 @@ Template.loginLayout.created = function() {
   const urlObject = parseUrl(window.location.href)
   const {lgJWT} = urlObject.query
   if (lgJWT) {
-    console.log('[LG SSO] lgJWT token found in query string, logging in')
+    console.log('[LG SSO] lgJWT token found in query string, signing-in')
     if (history && typeof history.pushState === 'function') {
       const newQuery = Object.assign({}, urlObject.query)
       delete newQuery.lgJWT
@@ -53,12 +53,7 @@ Template.loginLayout.created = function() {
   }
   console.log('[LG SSO] no lgJWT token found in query string, redirecting to IDM')
   // differentiate between dev and prod
-  let idmURL = 'https://idm.learnersguild.org'
-  if (window.location.href.match(/localhost/)) {
-    idmURL = 'http://localhost:9001'
-  } else if (window.location.href.match(/learnersguild\.dev/)) {
-    idmURL = 'http://idm.learnersguild.dev'
-  }
+  const idmURL = window.location.href.match(/learnersguild\.dev/) ? 'http://idm.learnersguild.dev' : 'https://idm.learnersguild.org'
   const redirect = encodeURIComponent(window.location.href)
   console.log('[LG SSO] idmURL:', idmURL, 'redirect:', redirect)
   window.location.href = `${idmURL}/sign-in?redirect=${redirect}&responseType=token`
