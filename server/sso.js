@@ -143,6 +143,7 @@ Accounts.registerLoginHandler(loginRequest => {
     // console.log('userId:', user._id, 'token:', stampedToken.token)
     return {userId: rcUser._id, token: stampedToken.token}
   } catch (err) {
+    RavenLogger.log(err)
     console.error('[LG SSO] invalid or expired lgJWT token', err.stack)
   }
 

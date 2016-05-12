@@ -37,7 +37,9 @@ function ensureWelcomChannelExists(adminUser) {
 
 Meteor.startup(() => {
   if (!process.env.JWT_PUBLIC_KEY) {
-    throw new Error('JWT_PUBLIC_KEY must be set in environment!')
+    const msg = 'JWT_PUBLIC_KEY must be set in environment!'
+    RavenLogger.log(msg)
+    throw new Error(msg)
   }
 
   // create admin user (if it doesn't exist -- for Meteor.runAsUser() purposes)
