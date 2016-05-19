@@ -1,53 +1,63 @@
-function ensureAdminUserExists() {
-  let user = Meteor.users.findOne({username: '__lgadmin__'})
+const BOT_USERNAME = 'lg-bot'
+function ensureLGBotUserExists() {
+  let user = Meteor.users.findOne({username: BOT_USERNAME})
   if (!user) {
-    const adminUserDoc = {
-      name: 'Learners Guild Admin',
-      username: '__lgadmin__',
+    const botUserDoc = {
+      name: 'Learners Guild Bot',
+      username: BOT_USERNAME,
       emails: [{
-        address: 'admin@learnersguild.org',
+        address: 'bot@learnersguild.org',
         verified: true,
       }],
-      roles: ['admin'],
+      // make sure we have access to do whatever we want in Rocket.Chat
+      // see: https://rocket.chat/docs/developer-guides/rest-api/
+      roles: ['admin', 'bulk-register-user', 'bulk-create-c'],
       active: true,
       avatarOrigin: 'gravatar',
     }
-    const userId = Accounts.insertUserDoc({}, adminUserDoc)
+    const userId = Accounts.insertUserDoc({}, botUserDoc)
     user = Meteor.users.findOne(userId)
-    console.log('[LG SSO] created LG admin user')
+    console.log('[LG SSO] created lg-bot user')
   } else {
-    console.log('[LG SSO] found existing LG admin user')
+    console.log('[LG SSO] found existing lg-bot user')
   }
 
+  Accounts.setPassword(user.id, process.env.CHAT_API_USER_SECRET, {logout: false})
   return user
 }
 
-function ensureWelcomChannelExists(adminUser) {
+function ensureWelcomChannelExists(botUser) {
   let welcomeRoom = RocketChat.models.Rooms.findOneByName('welcome')
   if (welcomeRoom) {
     console.log('[LG SSO] found existing welcome room')
     return
   }
-  Meteor.runAsUser(adminUser._id, () => {
+  Meteor.runAsUser(botUser._id, () => {
     const channel = Meteor.call('createChannel', 'welcome', [])
     welcomeRoom = RocketChat.models.Rooms.findOne({_id: channel.rid})
     console.log('[LG SSO] created welcome room')
   })
 }
 
+function ensureEnvironment() {
+  [
+    'JWT_PUBLIC_KEY',
+    'CHAT_API_USER_SECRET',
+  ].forEach(envVar => {
+    if (!process.env[envVar]) {
+      const msg = `${envVar} must be set in environment!`
+      RavenLogger.log(msg)
+      throw new Error(msg)
+    }
+  })
+}
+
 Meteor.startup(() => {
-  if (!process.env.JWT_PUBLIC_KEY) {
-    const msg = 'JWT_PUBLIC_KEY must be set in environment!'
-    RavenLogger.log(msg)
-    throw new Error(msg)
-  }
+  ensureEnvironment()
 
   // create admin user (if it doesn't exist -- for Meteor.runAsUser() purposes)
-  const adminUser = ensureAdminUserExists()
+  const botUser = ensureLGBotUserExists()
 
   // create welcome channel if it doesn't exist
-  ensureWelcomChannelExists(adminUser)
-
-  // ensure that the admin user doesn't belong to any rooms
-  RocketChat.models.Rooms.removeUsernameFromAll('__lgadmin__')
+  ensureWelcomChannelExists(botUser)
 })
