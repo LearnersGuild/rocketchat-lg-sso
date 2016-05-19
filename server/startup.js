@@ -22,7 +22,7 @@ function ensureLGBotUserExists() {
     console.log('[LG SSO] found existing lg-bot user')
   }
 
-  Accounts.setPassword(user.id, process.env.CHAT_API_USER_SECRET, {logout: false})
+  Accounts.setPassword(user._id, process.env.CHAT_API_USER_SECRET, {logout: false})
   return user
 }
 
