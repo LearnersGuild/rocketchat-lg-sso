@@ -21,18 +21,9 @@ Be sure you've read the [instructions for contributing](./CONTRIBUTING.md).
         $ ln -s ../rocketchat-lg-sso .
         $ meteor add learnersguild:rocketchat-lg-sso
 
-5. Export the `JWT_PUBLIC_KEY` from your IDM instance:
+5. Start the server.
 
-        $ export JWT_PUBLIC_KEY="<same public key from your IDM instance>"
-
-6. Start the server.
-
-        $ meteor
-
-7. Visit the server in your browser:
-
-        $ open http://localhost:3000
-
+        $ learners-guild/start.sh
 
 ## License
 
