@@ -23,6 +23,7 @@ function fetchJWTAndUpdateUserInfo() {
   }
 
   console.log('[LG SSO] fetching new JWT token and updating user info')
+  /* global window */
   const baseURL = window.location.href.match(/learnersguild\.dev/) ? 'http://idm.learnersguild.dev' : 'https://idm.learnersguild.org'
   const {lgUser, lgJWT} = Meteor.user().services.lgSSO
   const query = {
@@ -37,14 +38,15 @@ query($id: ID!) {
   }
 
   lastFetchAndUpdateAt = now
+  /* global rawGraphQLFetcher */
   return rawGraphQLFetcher(lgJWT, baseURL)(query)
-    .then(function(response) {
+    .then(response => {
       const lgJWT = response.headers['learnersguild-jwt']
       if (lgJWT) {
         Meteor.call('createOrUpdateUserFromJWT', lgJWT)
       }
     })
-    .catch(function(error) {
+    .catch(error => {
       RavenLogger.log(error)
       console.error('[LG SSO] error updating user', error.stack)
     })

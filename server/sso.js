@@ -1,3 +1,5 @@
+/* global userFromJWT:true */
+/* exported userFromJWT */
 userFromJWT = Npm.require('@learnersguild/idm-jwt-auth/lib/utils').userFromJWT
 const Future = Npm.require('fibers/future')
 
@@ -21,11 +23,12 @@ query($id: ID!) {
     `,
     variables: {id: lgUser.id},
   }
+  /* global graphQLFetcher */
   graphQLFetcher(lgJWT, baseURL)(query)
     .then(data => fut.return(data.getPlayerById))
     .catch(error => {
-      // TODO: log to sentry
       console.error('[LG SSO] ERROR getting player info', error.stack)
+      RavenLogger.log(error)
       fut.throw(error)
     })
 
@@ -123,7 +126,7 @@ Meteor.methods({createOrUpdateUserFromJWT})
 Accounts.registerLoginHandler(loginRequest => {
   // console.log('[LG SSO] loginRequest:', loginRequest)
   const {lgSSO, lgJWT} = loginRequest
-  if(!lgSSO || !lgJWT) {
+  if (!lgSSO || !lgJWT) {
     return undefined
   }
 
@@ -157,7 +160,6 @@ Meteor.publish('lgUserData', function () {
       {_id: this.userId},
       {fields: {'services.lgSSO': 1}}
     )
-  } else {
-    this.ready()
   }
+  this.ready()
 })
