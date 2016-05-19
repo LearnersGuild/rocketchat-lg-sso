@@ -1,12 +1,13 @@
-Meteor.loginUsingLearnersGuildJWT = function(lgJWT, userCallback) {
-  const methodArguments = [{lgSSO: true, lgJWT }]
+Meteor.loginUsingLearnersGuildJWT = function (lgJWT, userCallback) {
+  const methodArguments = [{lgSSO: true, lgJWT}]
 
   Accounts.callLoginMethod({methodArguments, userCallback})
 }
 
-function parseUrl(url) {
+/* global window, document */
+function parseUrl(url = window.location.href) {
   const urlParser = document.createElement('a')
-  urlParser.href = window.location.href
+  urlParser.href = url
   const attrs = urlParser.search.slice(1).split('&')
   const query = attrs.reduce((last, attr) => {
     if (attr) {
@@ -20,7 +21,7 @@ function parseUrl(url) {
     host: urlParser.host,
     pathname: urlParser.pathname,
     hash: urlParser.hash,
-    query: query,
+    query,
   }
 }
 
@@ -38,11 +39,12 @@ function formatUrl(urlObject) {
 // back to us from the IDM service if we're being redirected back because we
 // pass 'responseType=token' to IDM). If we find it, we'll use it to sign-in.
 // Otherwise, we'll redirect to IDM passing 'responseType=token'.
-Template.loginLayout.created = function() {
+Template.loginLayout.created = function () {
   const urlObject = parseUrl(window.location.href)
   const {lgJWT} = urlObject.query
   if (lgJWT) {
     console.log('[LG SSO] lgJWT token found in query string, signing-in')
+    /* global history */
     if (history && typeof history.pushState === 'function') {
       const newQuery = Object.assign({}, urlObject.query)
       delete newQuery.lgJWT
