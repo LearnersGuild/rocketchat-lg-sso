@@ -1,5 +1,8 @@
 # History
 
+#### 0.4.7
+- Removing bulk-* permissions from roles list for bot.
+
 #### 0.4.5
 - updating README
 
