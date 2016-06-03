@@ -36,6 +36,7 @@
     "semicolon": false
   },
   "devDependencies": {
+    "pre-commit": "^1.1.3",
     "xo": "^0.15.1"
   }
 }
