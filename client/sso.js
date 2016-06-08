@@ -53,12 +53,15 @@ Template.loginLayout.created = function () {
     }
     return Meteor.loginUsingLearnersGuildJWT(lgJWT)
   }
-  console.log('[LG SSO] no lgJWT token found in query string, redirecting to IDM')
   // differentiate between dev and prod
   const idmURL = window.location.href.match(/learnersguild\.dev/) ? 'http://idm.learnersguild.dev' : 'https://idm.learnersguild.org'
-  const redirect = encodeURIComponent(window.location.href)
-  console.log('[LG SSO] idmURL:', idmURL, 'redirect:', redirect)
-  window.location.href = `${idmURL}/sign-in?redirect=${redirect}&responseType=token`
+  const redirect = encodeURIComponent(window.location.href.split(/[?#]/)[0])
+  /* global HttpQueryString */
+  const {inviteCode} = HttpQueryString.parse(window.location.search.slice(1))
+  const authURLQuery = HttpQueryString.stringify({redirect, responseType: 'token'})
+  const authURL = inviteCode ? `${idmURL}/sign-up/${inviteCode}?${authURLQuery}` : `${idmURL}/sign-in?${authURLQuery}`
+  console.log(`[LG SSO] no lgJWT token found in query string, redirecting to ${authURL}`)
+  window.location.href = authURL
 }
 
 // make sure our lgSSO service data is returned with user object
