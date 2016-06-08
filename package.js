@@ -5,7 +5,8 @@ Package.describe({
   git: 'https://github.com/LearnersGuild/rocketchat-lg-sso'
 })
 
-Package.onUse(function(api) {
+/* eslint-disable prefer-arrow-callback */
+Package.onUse(function (api) {
   api.versionsFrom('1.2.1')
 
   api.use([
@@ -14,7 +15,7 @@ Package.onUse(function(api) {
   ])
   api.use([
     'rocketchat:lib@0.0.1'
-  ], { weak: true, unordered: false })
+  ], {weak: true, unordered: false})
   api.use([
     'templating'
   ], 'client')
