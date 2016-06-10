@@ -1,6 +1,6 @@
 Package.describe({
   name: 'learnersguild:rocketchat-lg-sso',
-  version: '0.5.0',
+  version: '0.5.1',
   summary: 'Accounts login handler for Learners Guild SSO.',
   git: 'https://github.com/LearnersGuild/rocketchat-lg-sso'
 })
@@ -43,5 +43,5 @@ Package.onUse(function (api) {
 })
 
 Npm.depends({
-  '@learnersguild/idm-jwt-auth': '0.1.3'
+  '@learnersguild/idm-jwt-auth': '0.2.4'
 })
