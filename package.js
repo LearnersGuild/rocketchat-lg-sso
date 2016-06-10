@@ -1,20 +1,22 @@
 Package.describe({
   name: 'learnersguild:rocketchat-lg-sso',
-  version: '0.4.9',
+  version: '0.5.0',
   summary: 'Accounts login handler for Learners Guild SSO.',
   git: 'https://github.com/LearnersGuild/rocketchat-lg-sso'
 })
 
-Package.onUse(function(api) {
+/* eslint-disable prefer-arrow-callback */
+Package.onUse(function (api) {
   api.versionsFrom('1.2.1')
 
   api.use([
     'ecmascript',
     'deepwell:raven@0.3.0',
+    'evaisse:http-query-string@0.0.1',
   ])
   api.use([
     'rocketchat:lib@0.0.1'
-  ], { weak: true, unordered: false })
+  ], {weak: true, unordered: false})
   api.use([
     'templating'
   ], 'client')
