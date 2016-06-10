@@ -1,10 +1,13 @@
-const BOT_USERNAME = 'lg-bot'
+/* global LG_BOT_USERNAME:true */
+/* exported LG_BOT_USERNAME */
+LG_BOT_USERNAME = 'echo'
+
 function ensureLGBotUserExists() {
-  let user = Meteor.users.findOne({username: BOT_USERNAME})
+  let user = Meteor.users.findOne({username: LG_BOT_USERNAME})
   if (!user) {
     const botUserDoc = {
-      name: 'Learners Guild Bot',
-      username: BOT_USERNAME,
+      name: 'echo',
+      username: LG_BOT_USERNAME,
       emails: [{
         address: 'bot@learnersguild.org',
         verified: true,
@@ -17,9 +20,9 @@ function ensureLGBotUserExists() {
     }
     const userId = Accounts.insertUserDoc({}, botUserDoc)
     user = Meteor.users.findOne(userId)
-    console.log('[LG SSO] created lg-bot user')
+    console.log('[LG SSO] created echo (bot) user')
   } else {
-    console.log('[LG SSO] found existing lg-bot user')
+    console.log('[LG SSO] found existing echo (bot) user')
   }
 
   Accounts.setPassword(user._id, process.env.CHAT_API_USER_SECRET, {logout: false})
