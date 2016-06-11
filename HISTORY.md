@@ -1,5 +1,8 @@
 # History
 
+#### 0.5.3
+- Added a quick 'n' dirty :echo: --> :elephant: mapper
+
 #### 0.5.2
 - Rename `lg-bot` to `echo`
 - Use ROOT_URL rather than APP_BASEURL

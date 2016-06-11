@@ -1,6 +1,6 @@
 Package.describe({
   name: 'learnersguild:rocketchat-lg-sso',
-  version: '0.5.2',
+  version: '0.5.3',
   summary: 'Accounts login handler for Learners Guild SSO.',
   git: 'https://github.com/LearnersGuild/rocketchat-lg-sso'
 })
@@ -26,6 +26,7 @@ Package.onUse(function (api) {
   ], 'server')
 
   api.addFiles([
+    'lib/mapEmoji.js',
     'lib/graphQLFetcher.js',
   ])
   api.addFiles([
