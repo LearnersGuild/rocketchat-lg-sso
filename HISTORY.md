@@ -1,5 +1,8 @@
 # History
 
+#### 0.5.4
+- Update user avatar from gravatar on sign-in
+
 #### 0.5.3
 - Added a quick 'n' dirty :echo: --> :elephant: mapper
 
