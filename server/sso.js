@@ -65,6 +65,15 @@ function joinRooms(rcUser) {
   }
 }
 
+function setAvatarFromGravatar(rcUser, email) {
+  Meteor.runAsUser(rcUser._id, () => {
+    console.log('[LG SSO] setting avatar from gravatar')
+    /* global Gravatar */
+    const url = Gravatar.imageUrl(email, {default: '404', size: 200, secure: true})
+    Meteor.call('setAvatarFromService', url, null, 'url')
+  })
+}
+
 function createOrUpdateUserFromJWT(lgJWT) {
   // console.log('[LG SSO] public key:', process.env.JWT_PUBLIC_KEY)
   const lgUser = userFromJWT(lgJWT)
@@ -87,7 +96,6 @@ function createOrUpdateUserFromJWT(lgJWT) {
     }),
     roles,
     active: true,
-    avatarOrigin: 'gravatar'
   }
 
   if (rcUser) {
@@ -101,6 +109,9 @@ function createOrUpdateUserFromJWT(lgJWT) {
     const userId = Accounts.insertUserDoc({}, newUser)
     rcUser = Meteor.users.findOne(userId)
   }
+
+  // update user avatar using gravatar for their primary LG email
+  setAvatarFromGravatar(rcUser, lgUser.email)
 
   // create or update the lgJWT, user info, and player info
   const lgSSO = {
