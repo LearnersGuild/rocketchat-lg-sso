@@ -1,5 +1,8 @@
 # History
 
+#### 0.5.5
+- Make echo (the bot) have the `bot` role
+
 #### 0.5.4
 - Update user avatar from gravatar on sign-in
 

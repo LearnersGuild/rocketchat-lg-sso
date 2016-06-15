@@ -14,7 +14,7 @@ function ensureLGBotUserExists() {
       }],
       // make sure we have access to do whatever we want in Rocket.Chat
       // see: https://rocket.chat/docs/developer-guides/rest-api/
-      roles: ['admin'],
+      roles: ['admin', 'bot'],
       active: true,
       avatarOrigin: 'gravatar',
     }
