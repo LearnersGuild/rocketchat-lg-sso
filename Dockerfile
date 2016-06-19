@@ -2,6 +2,8 @@ FROM node:5.10
 MAINTAINER jeffrey@learnersguild.org
 
 # INSTALL any further tools you need here so they are cached in the docker build
+RUN apt-get update && apt-get install -y \
+  expect
 
 # Set the WORKDIR to /app so all following commands run in /app
 WORKDIR /app

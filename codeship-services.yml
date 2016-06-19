@@ -3,3 +3,4 @@ app:
     image: learnersguild/rocketchat-lg-sso-test
     dockerfile_path: Dockerfile
   encrypted_env_file: app.env.encrypted
+  cached: true
