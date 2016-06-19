@@ -5,6 +5,8 @@ MAINTAINER jeffrey@learnersguild.org
 RUN apt-get update && apt-get install -y \
   expect
 
+RUN curl https://install.meteor.com/ | /bin/sh
+
 # Set the WORKDIR to /app so all following commands run in /app
 WORKDIR /app
 
