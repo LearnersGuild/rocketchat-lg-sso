@@ -2,10 +2,6 @@
   name: ci
   command: npm run test
 - service: app
-  name: meteor login
-  command: ./meteor-login.exp ${METEOR_USERNAME} ${METEOR_PASSWORD}
-  tag: master
-- service: app
-  name: meteor publish
-  command: meteor publish
+  name: publish
+  command: npm run publish
   tag: master
