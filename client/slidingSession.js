@@ -46,9 +46,9 @@ query($id: ID!) {
         Meteor.call('createOrUpdateUserFromJWT', lgJWT)
       }
     })
-    .catch(error => {
-      RavenLogger.log(error)
-      console.error('[LG SSO] error updating user', error.stack)
+    .catch(err => {
+      RavenLogger.log(err)
+      console.error('[LG SSO] error updating user', err.stack)
     })
 }
 
