@@ -121,10 +121,9 @@ function createOrUpdateUserFromJWT(lgJWT) {
   if (lgUser.roles.indexOf('player') >= 0) {
     lgSSO.lgPlayer = fetchPlayer(lgJWT, lgUser)
   }
+  const services = Object.assign({}, rcUser.services, {lgSSO})
   Meteor.users.update(rcUser, {
-    $set: {
-      'services.lgSSO': lgSSO
-    },
+    $set: {services}
   })
   rcUser = Meteor.users.findOne(rcUser._id)
 
