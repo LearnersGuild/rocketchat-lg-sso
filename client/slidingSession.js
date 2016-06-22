@@ -5,8 +5,16 @@ function updateLastUserActivityAt() {
 
 let lastFetchAndUpdateAt = 0
 function fetchJWTAndUpdateUserInfo() {
+  const user = Meteor.user()
   // we don't want to fetch and update if no one is signed in
-  if (!Meteor.user()) {
+  if (!user) {
+    return
+  }
+
+  if (!user.services || !user.services.lgSSO) {
+    const message = `Sliding sessions not working for ${user.username} (id=${user._id}) because the user record is missing the 'services.lgSSO' attribute`
+    RavenLogger.log(message)
+    console.error(`[LG SSO] ${message}`)
     return
   }
 
@@ -25,7 +33,7 @@ function fetchJWTAndUpdateUserInfo() {
   console.log('[LG SSO] fetching new JWT token and updating user info')
   /* global window */
   const baseURL = window.location.href.match(/learnersguild\.dev/) ? 'http://idm.learnersguild.dev' : 'https://idm.learnersguild.org'
-  const {lgUser, lgJWT} = Meteor.user().services.lgSSO
+  const {lgUser, lgJWT} = user.services.lgSSO
   const query = {
     query: `
 query($id: ID!) {
