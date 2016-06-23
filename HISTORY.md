@@ -1,5 +1,8 @@
 # History
 
+#### 0.5.7
+- Be more defensive when reading the Meteor user record and handle errors gracefully. (Fixes #16, #21, and #22.)
+
 #### 0.5.5
 - Make echo (the bot) have the `bot` role
 

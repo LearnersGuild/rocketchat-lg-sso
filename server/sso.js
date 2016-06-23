@@ -26,10 +26,10 @@ query($id: ID!) {
   /* global graphQLFetcher */
   graphQLFetcher(lgJWT, baseURL)(query)
     .then(data => fut.return(data.getPlayerById))
-    .catch(error => {
-      console.error('[LG SSO] ERROR getting player info', error.stack)
-      RavenLogger.log(error)
-      fut.throw(error)
+    .catch(err => {
+      console.error('[LG SSO] ERROR getting player info', err.stack)
+      RavenLogger.log(err)
+      fut.throw(err)
     })
 
   return fut.wait()
@@ -121,10 +121,9 @@ function createOrUpdateUserFromJWT(lgJWT) {
   if (lgUser.roles.indexOf('player') >= 0) {
     lgSSO.lgPlayer = fetchPlayer(lgJWT, lgUser)
   }
+  const services = Object.assign({}, rcUser.services, {lgSSO})
   Meteor.users.update(rcUser, {
-    $set: {
-      'services.lgSSO': lgSSO
-    },
+    $set: {services}
   })
   rcUser = Meteor.users.findOne(rcUser._id)
 
