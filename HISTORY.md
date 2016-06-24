@@ -1,5 +1,8 @@
 # History
 
+#### 0.5.8
+- Be more defensive when trying to set avatar from gravatar. (Fixes #24.)
+
 #### 0.5.7
 - Be more defensive when reading the Meteor user record and handle errors gracefully. (Fixes #16, #21, and #22.)
 
