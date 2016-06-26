@@ -65,11 +65,12 @@ function joinRooms(rcUser) {
   }
 }
 
-function setAvatarFromGravatar(rcUser, email) {
+function setAvatarFromGravatar(rcUser, lgUser) {
   Meteor.runAsUser(rcUser._id, () => {
     console.log('[LG SSO] setting avatar from gravatar')
     /* global Gravatar */
-    const url = Gravatar.imageUrl(email, {default: '404', size: 200, secure: true})
+    const defaultURL = encodeURIComponent(`https://lg-initials-avatar.herokuapp.com/${lgUser.name}`)
+    const url = Gravatar.imageUrl(lgUser.email, {default: defaultURL, size: 200, secure: true})
     Meteor.call('setAvatarFromService', url, null, 'url')
   })
 }
@@ -111,7 +112,12 @@ function createOrUpdateUserFromJWT(lgJWT) {
   }
 
   // update user avatar using gravatar for their primary LG email
-  setAvatarFromGravatar(rcUser, lgUser.email)
+  try {
+    setAvatarFromGravatar(rcUser, lgUser)
+  } catch (err) {
+    RavenLogger.log(err)
+    console.warn('[LG SSO] could not set avatar from gravatar', err.stack)
+  }
 
   // create or update the lgJWT, user info, and player info
   const lgSSO = {
@@ -143,7 +149,12 @@ Accounts.registerLoginHandler(loginRequest => {
   try {
     const rcUser = createOrUpdateUserFromJWT(lgJWT)
 
-    joinRooms(rcUser)
+    try {
+      joinRooms(rcUser)
+    } catch (err) {
+      RavenLogger.log(err)
+      console.warn('[LG SSO] could not join default rooms', err.stack)
+    }
 
     // create or update the login token
     const stampedToken = Accounts._generateStampedLoginToken()
@@ -157,7 +168,7 @@ Accounts.registerLoginHandler(loginRequest => {
     return {userId: rcUser._id, token: stampedToken.token}
   } catch (err) {
     RavenLogger.log(err)
-    console.error('[LG SSO] invalid or expired lgJWT token', err.stack)
+    console.error('[LG SSO] error signing-in using SSO on idm service', err.stack)
   }
 
   return undefined
