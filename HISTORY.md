@@ -1,5 +1,8 @@
 # History
 
+#### 0.6.1
+- New users must be of type 'bot' or type 'user' (Fixes #29.)
+
 #### 0.6.0
 - Use GitHub avatar rather than gravatar (Fixes #26.)
 - Better error handling when authentication fails (Fixes #27.)
