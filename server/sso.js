@@ -94,6 +94,7 @@ function createOrUpdateUserFromJWT(lgJWT) {
       return {address: email, verified: true}
     }),
     roles,
+    type: 'user',
     active: true,
   }
 
