@@ -1,5 +1,9 @@
 # History
 
+#### 0.6.0
+- Use GitHub avatar rather than gravatar (Fixes #26.)
+- Better error handling when authentication fails (Fixes #27.)
+
 #### 0.5.8
 - Be more defensive when trying to set avatar from gravatar. (Fixes #24.)
 

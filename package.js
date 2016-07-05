@@ -1,6 +1,6 @@
 Package.describe({
   name: 'learnersguild:rocketchat-lg-sso',
-  version: '0.5.8',
+  version: '0.6.0',
   summary: 'Accounts login handler for Learners Guild SSO.',
   git: 'https://github.com/LearnersGuild/rocketchat-lg-sso'
 })
@@ -15,7 +15,6 @@ Package.onUse(function (api) {
     'evaisse:http-query-string@0.0.1',
   ])
   api.use([
-    'jparker:gravatar@0.4.1',
     'rocketchat:lib@0.0.1',
   ], {weak: true, unordered: false})
   api.use([

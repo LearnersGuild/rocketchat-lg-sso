@@ -1,7 +1,7 @@
-Meteor.loginUsingLearnersGuildJWT = function (lgJWT, userCallback) {
+function loginUsingLearnersGuildJWT(lgJWT, userCallback) {
   const methodArguments = [{lgSSO: true, lgJWT}]
 
-  Accounts.callLoginMethod({methodArguments, userCallback})
+  return Accounts.callLoginMethod({methodArguments, userCallback})
 }
 
 /* global window, document */
@@ -34,6 +34,10 @@ function formatUrl(urlObject) {
   return url
 }
 
+function idmURL() {
+  return window.location.href.match(/learnersguild\.dev/) ? 'http://idm.learnersguild.dev' : 'https://idm.learnersguild.org'
+}
+
 // This is a weird hack. We'll wait until the loginLayout is created, and once
 // it has been created, we'll look for our token (which may have been passed
 // back to us from the IDM service if we're being redirected back because we
@@ -51,18 +55,25 @@ Template.loginLayout.created = function () {
       urlObject.query = newQuery
       history.pushState({}, '', formatUrl(urlObject))
     }
-    return Meteor.loginUsingLearnersGuildJWT(lgJWT)
+    return loginUsingLearnersGuildJWT(lgJWT)
   }
   // differentiate between dev and prod
-  const idmURL = window.location.href.match(/learnersguild\.dev/) ? 'http://idm.learnersguild.dev' : 'https://idm.learnersguild.org'
   const redirect = encodeURIComponent(window.location.href.split(/[?#]/)[0])
   /* global HttpQueryString */
   const {inviteCode} = HttpQueryString.parse(window.location.search.slice(1))
   const authURLQuery = HttpQueryString.stringify({redirect, responseType: 'token'})
-  const authURL = inviteCode ? `${idmURL}/sign-up/${inviteCode}?${authURLQuery}` : `${idmURL}/sign-in?${authURLQuery}`
+  const authURL = inviteCode ? `${idmURL()}/sign-up/${inviteCode}?${authURLQuery}` : `${idmURL()}/sign-in?${authURLQuery}`
   console.log(`[LG SSO] no lgJWT token found in query string, redirecting to ${authURL}`)
   window.location.href = authURL
 }
+
+Meteor.startup(() => {
+  Accounts.onLoginFailure(() => {
+    // if our login fails for any reason, we need to redirect to IDM with an auth error message
+    const failureRedirectURL = `${idmURL()}/sign-in?err=auth`
+    window.location.href = failureRedirectURL
+  })
+})
 
 // make sure our lgSSO service data is returned with user object
 Meteor.subscribe('lgUserData')
