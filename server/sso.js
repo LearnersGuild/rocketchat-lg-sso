@@ -65,12 +65,10 @@ function joinRooms(rcUser) {
   }
 }
 
-function setAvatarFromGravatar(rcUser, lgUser) {
+function setAvatarFromGitHubAvatar(rcUser, lgUser) {
   Meteor.runAsUser(rcUser._id, () => {
-    console.log('[LG SSO] setting avatar from gravatar')
-    /* global Gravatar */
-    const defaultURL = encodeURIComponent(`https://lg-initials-avatar.herokuapp.com/${lgUser.name}`)
-    const url = Gravatar.imageUrl(lgUser.email, {default: defaultURL, size: 200, secure: true})
+    console.log('[LG SSO] setting avatar from GitHub avatar')
+    const url = `https://github.com/${lgUser.handle}.png?s=200`
     Meteor.call('setAvatarFromService', url, null, 'url')
   })
 }
@@ -111,12 +109,12 @@ function createOrUpdateUserFromJWT(lgJWT) {
     rcUser = Meteor.users.findOne(userId)
   }
 
-  // update user avatar using gravatar for their primary LG email
+  // update user avatar using GitHub avatar
   try {
-    setAvatarFromGravatar(rcUser, lgUser)
+    setAvatarFromGitHubAvatar(rcUser, lgUser)
   } catch (err) {
     RavenLogger.log(err)
-    console.warn('[LG SSO] could not set avatar from gravatar', err.stack)
+    console.warn('[LG SSO] could not set avatar from GitHub avatar', err.stack)
   }
 
   // create or update the lgJWT, user info, and player info
