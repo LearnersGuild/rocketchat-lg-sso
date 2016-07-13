@@ -1,5 +1,8 @@
 # History
 
+#### 0.7.0
+- Don't store `lgPlayer` or create chapter rooms
+
 #### 0.6.1
 - New users must be of type 'bot' or type 'user' (Fixes #29.)
 
