@@ -90,7 +90,7 @@ Accounts.registerLoginHandler(loginRequest => {
       joinRoom(rcUser, 'general')
     } catch (err) {
       RavenLogger.log(err)
-      console.warn('[LG SSO] could not join `general` rooms', err.stack)
+      console.warn('[LG SSO] could not join `general` room', err.stack)
     }
 
     // create or update the login token
