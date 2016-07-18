@@ -1,4 +1,4 @@
-/* global userFromJWT:true */
+/* global userFromJWT:true, formatPhone */
 /* exported userFromJWT */
 userFromJWT = Npm.require('@learnersguild/idm-jwt-auth/lib/utils').userFromJWT
 
@@ -32,9 +32,8 @@ function createOrUpdateUserFromJWT(lgJWT) {
   const newUser = {
     name: lgUser.name,
     username: lgUser.handle,
-    emails: lgUser.emails.map(email => {
-      return {address: email, verified: true}
-    }),
+    emails: [{address: lgUser.email, verified: true}],
+    phone: [{phoneNumber: formatPhone(lgUser.phone)}],
     roles,
     type: 'user',
     active: true,

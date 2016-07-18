@@ -1,5 +1,9 @@
 # History
 
+#### 0.7.1
+- Store phone number from IDM so that it shows up in profile panel (Fixes #34)
+- Store only the primary IDM email address to avoid confusion (Fixes #35)
+
 #### 0.7.0
 - Don't store `lgPlayer` or create chapter rooms
 
