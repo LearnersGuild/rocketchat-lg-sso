@@ -26,7 +26,6 @@ Package.onUse(function (api) {
   ], 'server')
 
   api.addFiles([
-    'lib/formatPhone.js',
     'lib/graphQLFetcher.js',
     'lib/mapEmoji.js',
   ])
