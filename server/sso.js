@@ -32,9 +32,8 @@ function createOrUpdateUserFromJWT(lgJWT) {
   const newUser = {
     name: lgUser.name,
     username: lgUser.handle,
-    emails: lgUser.emails.map(email => {
-      return {address: email, verified: true}
-    }),
+    emails: [{address: lgUser.email, verified: true}],
+    phone: [{phoneNumber: lgUser.phone}],
     roles,
     type: 'user',
     active: true,
