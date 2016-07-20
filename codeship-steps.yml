@@ -1,7 +1,3 @@
 - service: app
   name: ci
   command: npm run test
-- service: app
-  name: publish
-  command: npm run publish
-  tag: master

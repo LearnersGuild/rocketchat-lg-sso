@@ -1,9 +1,6 @@
 {
   "scripts": {
     "lint": "./node_modules/.bin/xo --ignore package.js",
-    "publish:login": "./meteor-login.exp ${METEOR_USERNAME} ${METEOR_PASSWORD}",
-    "publish:package": "meteor publish",
-    "publish": "npm run publish:login && npm run publish:package",
     "test": "npm run lint"
   },
   "xo": {
